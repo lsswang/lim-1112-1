@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>景区缆车排队管理系统</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <h1>🏔️ 景区缆车排队管理系统</h1>
+            <div class="status-bar" id="statusBar">
+                <span class="status-indicator" id="statusIndicator"></span>
+                <span id="statusText">系统运行中</span>
+            </div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="visitor">👤 游客</button>
+            <button class="tab-btn" data-tab="dispatcher">🎛️ 调度员</button>
+            <button class="tab-btn" data-tab="service">💬 客服</button>
+        </nav>
+
+        <main class="content">
+            <section class="tab-content active" id="visitor-tab">
+                <div class="card">
+                    <h2>🚠 实时运行状态</h2>
+                    <div class="status-display" id="visitorStatusDisplay">
+                        <div class="status-item">
+                            <span class="label">运行状态：</span>
+                            <span class="value" id="visitorRunStatus">正常运行</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">当前天气：</span>
+                            <span class="value" id="visitorWeather">晴朗</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">排队人数：</span>
+                            <span class="value" id="visitorQueueCount">0</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">预计等候：</span>
+                            <span class="value" id="visitorWaitTime">0 分钟</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>📝 加入排队</h2>
+                    <form id="joinQueueForm">
+                        <div class="form-group">
+                            <label for="visitorName">姓名</label>
+                            <input type="text" id="visitorName" placeholder="请输入姓名" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="visitorPhone">手机号</label>
+                            <input type="tel" id="visitorPhone" placeholder="请输入手机号" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="visitorTimeSlot">选择时段</label>
+                            <select id="visitorTimeSlot" required>
+                                <option value="">请选择时段</option>
+                                <option value="morning">上午 (08:00-12:00)</option>
+                                <option value="afternoon">下午 (12:00-17:00)</option>
+                                <option value="evening">傍晚 (17:00-19:00)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">加入排队</button>
+                    </form>
+                    <div class="message" id="joinQueueMessage"></div>
+                </div>
+
+                <div class="card">
+                    <h2>🔍 查询排队状态</h2>
+                    <form id="queryForm">
+                        <div class="form-group">
+                            <label for="queryPhone">手机号</label>
+                            <input type="tel" id="queryPhone" placeholder="请输入手机号查询">
+                        </div>
+                        <button type="submit" class="btn btn-secondary">查询</button>
+                    </form>
+                    <div id="queryResult" class="query-result"></div>
+                </div>
+
+                <div class="card">
+                    <h2>📋 当前排队列表</h2>
+                    <div id="queueList" class="queue-list">
+                        <p class="empty">暂无排队数据</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="tab-content" id="dispatcher-tab">
+                <div class="card">
+                    <h2>🎛️ 运行状态控制</h2>
+                    <div class="control-panel">
+                        <div class="status-overview" id="dispatcherStatusOverview">
+                            <div class="big-status" id="bigStatus">
+                                <span class="icon">✅</span>
+                                <span class="text">正常运行</span>
+                            </div>
+                        </div>
+                        
+                        <div class="control-buttons">
+                            <button class="btn btn-success" id="btnNormal">
+                                <span class="btn-icon">☀️</span>
+                                正常运行
+                            </button>
+                            <button class="btn btn-warning" id="btnWind">
+                                <span class="btn-icon">🌬️</span>
+                                大风停运
+                            </button>
+                            <button class="btn btn-danger" id="btnMaintenance">
+                                <span class="btn-icon">🔧</span>
+                                维护停运
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>🚡 检票管理</h2>
+                    <form id="checkInForm">
+                        <div class="form-group">
+                            <label for="checkInPhone">游客手机号</label>
+                            <input type="tel" id="checkInPhone" placeholder="请输入手机号检票">
+                        </div>
+                        <button type="submit" class="btn btn-primary">检票上车</button>
+                    </form>
+                    <div class="message" id="checkInMessage"></div>
+                </div>
+
+                <div class="card">
+                    <h2>📊 排队统计</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="statQueue">0</div>
+                            <div class="stat-label">排队中</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="statChecked">0</div>
+                            <div class="stat-label">已检票</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="statRefunded">0</div>
+                            <div class="stat-label">已退票</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>📋 完整队列</h2>
+                    <div id="dispatcherQueueList" class="queue-list">
+                        <p class="empty">暂无数据</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="tab-content" id="service-tab">
+                <div class="card">
+                    <h2>💬 退票处理</h2>
+                    <form id="refundForm">
+                        <div class="form-group">
+                            <label for="refundPhone">游客手机号</label>
+                            <input type="tel" id="refundPhone" placeholder="请输入手机号办理退票">
+                        </div>
+                        <div class="form-group">
+                            <label for="refundReason">退票原因</label>
+                            <select id="refundReason" required>
+                                <option value="">请选择原因</option>
+                                <option value="personal">个人原因</option>
+                                <option value="weather">天气原因</option>
+                                <option value="other">其他原因</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-danger">办理退票</button>
+                    </form>
+                    <div class="message" id="refundMessage"></div>
+                </div>
+
+                <div class="card">
+                    <h2>🔍 游客信息查询</h2>
+                    <form id="serviceQueryForm">
+                        <div class="form-group">
+                            <label for="serviceQueryPhone">手机号</label>
+                            <input type="tel" id="serviceQueryPhone" placeholder="请输入手机号查询">
+                        </div>
+                        <button type="submit" class="btn btn-secondary">查询</button>
+                    </form>
+                    <div id="serviceQueryResult" class="query-result"></div>
+                </div>
+
+                <div class="card">
+                    <h2>📋 退票记录</h2>
+                    <div id="refundList" class="refund-list">
+                        <p class="empty">暂无退票记录</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
